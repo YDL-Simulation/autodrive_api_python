@@ -20,7 +20,7 @@ logging.basicConfig(filename="autodrive.log", level=logging.DEBUG, encoding="utf
 logger = logging.getLogger(__name__)
 
 current_gear = GearMode.DRIVE
-use_keyboard = False
+use_keyboard = True
 
 
 def set_gear(gear: GearMode):
@@ -37,15 +37,17 @@ def get_vehicle_control_from_keyboard(scene_info: SceneInfo) -> VehicleControl:
     vc = VehicleControl()
     vc.gear = current_gear
     if keyboard.is_pressed("up") or keyboard.is_pressed("w"):
+        value = 0.5 if keyboard.is_pressed("shift") else 1
         if current_gear == GearMode.DRIVE:
-            vc.throttle = 1
+            vc.throttle = value
         elif current_gear == GearMode.REVERSE:
-            vc.brake = 1
+            vc.brake = value
     elif keyboard.is_pressed("down") or keyboard.is_pressed("s"):
+        value = 0.5 if keyboard.is_pressed("shift") else 1
         if current_gear == GearMode.DRIVE:
-            vc.brake = 1
+            vc.brake = value
         elif current_gear == GearMode.REVERSE:
-            vc.throttle = 1
+            vc.throttle = value
     if keyboard.is_pressed("left") or keyboard.is_pressed("a"):
         vc.steering = -1
     elif keyboard.is_pressed("right") or keyboard.is_pressed("d"):
