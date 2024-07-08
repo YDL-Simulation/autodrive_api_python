@@ -195,6 +195,8 @@ class SceneAPI:
         msg = raw_msg["SimCarMsg"]
         road_line_list_file = msg["MapInfo"]["path"] + "/rd"
         self._read_road_lines(road_line_list_file)
+    
+    def ready(self):
         code2 = {"code": 2}
         self._socket.send(code2)
 

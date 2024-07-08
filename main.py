@@ -20,7 +20,7 @@ logging.basicConfig(filename="autodrive.log", level=logging.DEBUG, encoding="utf
 logger = logging.getLogger(__name__)
 
 current_gear = GearMode.DRIVE
-use_keyboard = True
+use_keyboard = False
 
 
 def set_gear(gear: GearMode):
@@ -115,10 +115,11 @@ def main():
     keyboard.add_hotkey("c", toggle_keyboard)
 
     api.connect()
-    logger.info("开始场景")
     if USE_GUI:
         dashboard = Dashboard(api.get_road_lines())
         logger.info("启动 GUI 界面")
+    api.ready()
+    logger.info("开始场景")
 
     while True:
         try:
