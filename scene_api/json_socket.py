@@ -26,14 +26,14 @@ class JsonSocket:
 
     def recv(self) -> dict:
         while True:
+            pos = self._buffer.find(self._SEPERATOR)
+            if pos != -1:
+                break
             msg = self._conn.recv(4096)
             if not msg:
                 logger.warning("连接中断")
                 raise ConnectionClosedError("连接中断")
             self._buffer += msg
-            pos = self._buffer.find(self._SEPERATOR)
-            if pos != -1:
-                break
         message = self._buffer[:pos]
         self._buffer = self._buffer[pos + len(self._SEPERATOR) :]
         return json.loads(message)
