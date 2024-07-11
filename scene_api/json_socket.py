@@ -8,6 +8,7 @@ logger = logging.getLogger(__name__)
 class ConnectionClosedError(Exception):
     pass
 
+
 class JsonSocket:
     _SEPERATOR = b"|end"
 
