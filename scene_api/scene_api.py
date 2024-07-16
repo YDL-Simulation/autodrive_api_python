@@ -168,8 +168,8 @@ def _get_scene_info_from_sim_car_msg(sim_car_msg: dict) -> SceneInfo:
 
 class SceneAPI:
     def __init__(self):
-        self._move_to_start = 0
-        self._move_to_end = 0
+        self._move_to_start = -1
+        self._move_to_end = -1
         self._socket = JsonSocket()
         self._road_lines = []
 
