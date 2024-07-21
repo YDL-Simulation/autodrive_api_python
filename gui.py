@@ -125,6 +125,12 @@ def tk_process_func(
             cur_max_idx = max_idx[road_line_idx]
             if cur_min_idx == -1:
                 continue
+            if road_line.type == RoadLineType.ZEBRA_CROSSING:
+                points = [convert_pos(Vector2(pt.x, pt.y)) for pt in road_line.points]
+                map_canvas.create_polygon(
+                    points, fill="", outline=ROADLINE_COLOR_MAP[road_line.type]
+                )
+                continue
             if cur_min_idx > 0:
                 cur_min_idx -= 1
             if cur_max_idx < len(road_line.points) - 1:
