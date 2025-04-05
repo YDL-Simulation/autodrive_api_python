@@ -88,7 +88,8 @@ class SceneAPI:
         :return: 元组 (SimCarMsg, frame)，其中:
 
             - SimCarMsg: 车辆状态、传感器数据等信息
-            - frame: 当前相机视图
+            - frame: 当前相机视图，为OpenCV图像格式(numpy.ndarray)，BGR颜色空间，
+              通常分辨率为640x480像素
         """
         # 先发送 code2，告知场景已经就绪
         code2 = {"code": 2}
