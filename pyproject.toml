@@ -1,0 +1,30 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "metacar"
+authors = [
+  { name="sky3141", email="sky3141@qq.com" },
+]
+description = "智能网联平台API"
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+license = "MIT"
+license-files = ["LICEN[CS]E*"]
+dynamic = ["version"]
+dependencies = [
+    "numpy>=2.0.0",
+    "opencv-python>=4.5.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/sky3141/autodrive_api_python"
+Issues = "https://github.com/sky3141/autodrive_api_python/issues"
+
+[tool.hatch.version]
+path = "metacar/__init__.py"
