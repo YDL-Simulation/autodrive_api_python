@@ -52,7 +52,7 @@ for sim_car_msg, frame in api.main_loop():
 
 完整的文档可以在以下方式获取：
 
-1. [在线文档](#) - 查看最新的 API 文档
+1. [在线文档](https://autodrive-api-python.readthedocs.io/zh-cn/latest/) - 查看最新的 API 文档
 2. 本地构建：
    ```bash
    cd docs
