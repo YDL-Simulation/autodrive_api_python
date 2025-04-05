@@ -6,7 +6,7 @@ from metacar import SceneAPI, GearMode, VehicleControl, Vector3, SimCarMsg
 USE_GUI = True
 
 if USE_GUI:
-    from examples.gui import Dashboard
+    from gui import Dashboard
 
 logging.basicConfig(
     filename="autodrive.log",
@@ -78,7 +78,7 @@ def calc_steering(
     steering_angle = (theta - yaw) % (2 * math.pi)
     if steering_angle > math.pi:
         steering_angle -= 2 * math.pi
-    steering = math.degrees(-steering_angle) / 45 * 2  # 2 是一个可调参数
+    steering = math.degrees(-steering_angle) / 45
     return max(min(steering, 1), -1)
 
 
