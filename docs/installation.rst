@@ -23,7 +23,7 @@
 
 .. code-block:: bash
 
-    git clone https://github.com/sky3141/autodrive_api_python.git
+    git clone https://github.com/YDL-Simulation/autodrive_api_python.git
     cd metacar
     pip install -e .
 

@@ -14,8 +14,8 @@ sys.path.insert(0, os.path.abspath(".."))
 from metacar import __version__
 
 project = "Metacar"
-copyright = "2025, sky3141"
-author = "sky3141"
+copyright = "2025, YDL-Simulation"
+author = "YDL-Simulation"
 release = __version__
 
 # -- General configuration ---------------------------------------------------
