@@ -33,44 +33,16 @@ MetaCar 库还包含了一个使用 GUI 界面展示车辆状态的示例。您�
 2. 如何解析和显示车辆传感器数据
 3. 如何实时更新界面中显示的内容
 
-开发您的第一个应用
+高级开发技巧
 ------------------
 
-开发自己的应用程序时，建议按照以下流程进行：
+在开发自己的应用程序时，以下是一些有用的高级技巧：
 
-1. 引入所需的模块和类
-2. 初始化并连接 SceneAPI
-3. 设计车辆控制算法
-4. 在主循环中实时处理数据并发送控制指令
+1. **图像处理** - 使用 frame 图像数据实现计算机视觉算法，如车道线检测、交通标志识别等
+2. **路径规划** - 基于 static_data.route 和 sim_car_msg.trajectory 实现更复杂的路径规划
+3. **传感器融合** - 结合摄像头和其他传感器数据实现更准确的环境感知
+4. **状态机设计** - 为车辆控制创建状态机，处理不同场景下的行为转换
 
-代码框架示例：
-
-.. code-block:: python
-
-    from metacar import SceneAPI, VehicleControl, GearMode
-    import logging
-    
-    # 配置日志系统
-    logging.basicConfig(filename="myapp.log", level=logging.INFO)
-    logger = logging.getLogger(__name__)
-    
-    def main():
-        # 初始化 API
-        api = SceneAPI()
-        
-        # 建立仿真连接
-        api.connect()
-        logger.info("成功连接仿真环境")
-        
-        # 获取场景静态信息
-        static_data = api.get_scene_static_data()
-        
-        # 启动主循环
-        for sim_car_msg, frame in api.main_loop():
-            # 在此处实现控制算法
-            vc = VehicleControl()
-            
-            # 向仿真环境发送控制指令
-            api.set_vehicle_control(vc)
-        
-        logger.info("仿真任务完成")
+.. note::
+   关于基本用法和入门指南，请参阅 :doc:`快速入门 <quickstart>` 文档。
+   本节示例侧重于展示更复杂的应用场景和实现技巧。
