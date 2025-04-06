@@ -1,15 +1,17 @@
-场景数据结构
+数据模型
 ========
 
 .. module:: metacar.models
 
 MetaCar 库使用了丰富的数据模型来表示场景中的各种元素，包括道路、车辆、交通灯等。这些数据模型都是使用 Python 的 dataclass 实现的，提供了类型提示、自动生成的初始化方法以及更好的代码可读性，使得开发者能够更清晰地理解和使用这些数据结构。
 
+数据解析工具
+---------------
+
+.. autofunction:: metacar.models.parse_data
 
 场景和道路相关
 ----------------
-
-读取场景信息，例如场景起始点位、全局地图路径、道路边线信息、道路边界信息、道路标记信息、车道拓扑信息、交通标志信息等。
 
 子场景信息
 ~~~~~~~~~~~~~
@@ -17,7 +19,13 @@ MetaCar 库使用了丰富的数据模型来表示场景中的各种元素，包
 .. autoclass:: metacar.SubSceneInfo
    :members:
 
-道路标记线类型
+地图配置
+~~~~~~~~~~~
+
+.. autoclass:: metacar.models.MapConfig
+   :members:
+
+道路标记类型
 ~~~~~~~~~~~~~~
 
 .. autoclass:: metacar.LineType
@@ -25,15 +33,14 @@ MetaCar 库使用了丰富的数据模型来表示场景中的各种元素，包
    :member-order: bysource
    :show-inheritance:
 
-车道边缘线信息
+边界信息
 ~~~~~~~~~~~
 
 .. autoclass:: metacar.BorderInfo
    :members:
 
-局部车道（lane）拓扑信息
+车道信息
 ~~~~~~~~~~~
-
 
 .. autoclass:: metacar.LaneInfo
    :members:
@@ -54,7 +61,7 @@ MetaCar 库使用了丰富的数据模型来表示场景中的各种元素，包
    :member-order: bysource
    :show-inheritance:
 
-道路（road）拓扑信息
+道路信息
 ~~~~~~~~~~~
 
 .. autoclass:: metacar.RoadInfo
@@ -73,6 +80,12 @@ MetaCar 库使用了丰富的数据模型来表示场景中的各种元素，包
 ~~~~~~~~~~~
 
 .. autoclass:: metacar.PoseGnss
+   :members:
+
+GNSS数据
+~~~~~~~~~~~
+
+.. autoclass:: metacar.DataGnss
    :members:
 
 档位模式
@@ -138,13 +151,13 @@ MetaCar 库使用了丰富的数据模型来表示场景中的各种元素，包
    :member-order: bysource
    :show-inheritance:
 
-交通灯组信息
+交通灯信息
 ~~~~~~~~~~~
 
 .. autoclass:: metacar.TrafficLightInfo
    :members:
 
-全局交通灯组列表信息
+交通灯组信息
 ~~~~~~~~~~~~~~
 
 .. autoclass:: metacar.TrafficLightGroupInfo

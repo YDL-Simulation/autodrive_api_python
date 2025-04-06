@@ -52,8 +52,6 @@ def parse_data(cls: type[T], data: Any) -> T:
 
 @dataclass
 class SubSceneInfo:
-    """子场景信息"""
-
     sub_scene_name: str  #: 子场景名称
     start_point: Vector3  #: 起点
     end_point: Vector3  #: 终点
@@ -68,8 +66,6 @@ class MapConfig:
 
 
 class LineType(Enum):
-    """道路标记线类型"""
-
     MIDDLE_LINE = 1  #: 中线
     SIDE_LINE = 2  #: 侧线
     SOLID_LINE = 3  #: 实线
@@ -80,7 +76,7 @@ class LineType(Enum):
 
 @dataclass
 class BorderInfo:
-    """车道边缘线信息, 包含车道边界类型（如实线、虚线）"""
+    """车道边界信息"""
 
     border_type: LineType  #: 边界类型
     path_point: list[Vector2]  #: 组成边界线的点，相邻点间隔约 3~5 米
@@ -88,7 +84,7 @@ class BorderInfo:
 
 @dataclass
 class LaneInfo:
-    """局部车道（lane）拓扑信息, 描述不同车道左右连接关系以及车道边界信息。"""
+    """车道信息"""
 
     id: str  #: 车道 ID
     left_border: BorderInfo  #: 左侧边界
@@ -116,7 +112,7 @@ class TrafficSign(Enum):
 
 @dataclass
 class RoadInfo:
-    """道路（road）拓扑信息，一条道路(Road)由一个或多个车道(Lane)组成, 包含道路起始点信息及前后拓扑信息"""
+    """道路信息，一条道路(Road)由一个或多个车道(Lane)组成"""
 
     id: str  #: 道路 ID
     begin_pos: Vector3  #: 起点
@@ -131,7 +127,7 @@ class RoadInfo:
 
 @dataclass
 class SceneStaticData:
-    """场景静态信息，包含路线、道路信息、子场景信息等在场景运行中不发生变化的信息"""
+    """场景静态信息"""
 
     route: list[Vector3]  #: 路线
     road_lines: list[RoadInfo]  #: 道路信息
@@ -152,6 +148,14 @@ class PoseGnss:
     ori_y: float  #: 欧拉角 Y（单位：角度）
     ori_z: float  #: 欧拉角 Z（单位：角度）
 
+
+@dataclass
+class DataGnss:
+    """GNSS数据"""
+
+    pose_gnss: PoseGnss  #: 车辆位姿信息
+
+
 class GearMode(Enum):
     """档位模式"""
 
@@ -163,7 +167,7 @@ class GearMode(Enum):
 
 @dataclass
 class MainVehicleInfo:
-    """主车信息，包含运动控制信息、灯光控制信息以及车辆固有信息"""
+    """主车信息"""
 
     main_vehicle_id: int  #: 主车 ID
     speed: float  #: 车速
@@ -192,7 +196,7 @@ class EulerAngle:
 
 @dataclass
 class CamaraInfo:
-    """摄像头信息，包含内外参信息"""
+    """摄像头信息"""
 
     id: str  #: 摄像头 ID
     position: Vector3  #: 位置
@@ -205,14 +209,14 @@ class CamaraInfo:
 
 @dataclass
 class SensorInfo:
-    """传感器信息，包含了局部摄像头和全局摄像头信息"""
+    """传感器信息"""
 
     ego_rgb_cams: list[CamaraInfo]  #: 主车摄像头
     v2x_cams: list[CamaraInfo]  #: V2X 摄像头
 
 
 class ObstacleType(Enum):
-    """障碍物类型（包含停车位信息）"""
+    """障碍物类型"""
 
     UNKNOWN = 0  #: 未知障碍物
     PEDESTRIAN = 4  #: 行人
@@ -236,7 +240,7 @@ class ObstacleType(Enum):
 
 @dataclass
 class ObstacleInfo:
-    """障碍物信息，包含动态信息与静态信息"""
+    """障碍物信息"""
 
     id: int  #: 障碍物 ID
     type: ObstacleType  #: 障碍物类型
@@ -265,7 +269,7 @@ class TrafficLightState(Enum):
 
 @dataclass
 class TrafficLightInfo:
-    """交通灯组信息"""
+    """一排交通灯的信息"""
 
     id: str  #: 交通灯 ID
     road_id: str  #: 道路 ID
@@ -280,7 +284,7 @@ class TrafficLightInfo:
 
 @dataclass
 class TrafficLightGroupInfo:
-    """全局交通灯组列表信息，能够看全局V2X信号灯信息"""
+    """交通灯组信息"""
 
     id: str  #: 交通灯组 ID
     traffic_light_state: list[TrafficLightInfo]  #: 交通灯信息
@@ -288,7 +292,7 @@ class TrafficLightGroupInfo:
 
 @dataclass
 class SceneStatus:
-    """场景状态信息，用于描述场景名称、场景目标以及场景评分状态"""
+    """场景状态信息"""
 
     sub_scene_name: str  #: 子场景名称
     used_time: float  #: 已用时间
@@ -298,10 +302,10 @@ class SceneStatus:
 
 @dataclass
 class SimCarMsg:
-    """仿真动态信息（视频流需从sceneapi-main_loop）"""
+    """仿真动态信息"""
 
     trajectory: list[Vector3]  #: 推荐轨迹
-    pose_gnss: PoseGnss  #: 车辆位姿信息
+    data_gnss: DataGnss  #: GNSS 数据
     data_main_vehicle: MainVehicleInfo  #: 主车信息
     sensor: SensorInfo  #: 传感器信息
     obstacle_entry_list: list[ObstacleInfo]  #: 障碍物信息

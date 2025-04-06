@@ -12,6 +12,7 @@ from .models import (
     RoadInfo,
     SceneStaticData,
     PoseGnss,
+    DataGnss,
     GearMode,
     MainVehicleInfo,
     CamaraInfo,
