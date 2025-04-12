@@ -82,12 +82,6 @@ MetaCar 库使用了丰富的数据模型来表示场景中的各种元素，包
 .. autoclass:: metacar.PoseGnss
    :members:
 
-GNSS数据
-~~~~~~~~~~~
-
-.. autoclass:: metacar.DataGnss
-   :members:
-
 档位模式
 ~~~~~~~~~~~
 

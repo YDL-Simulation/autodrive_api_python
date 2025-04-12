@@ -149,13 +149,6 @@ class PoseGnss:
     ori_z: float  #: 欧拉角 Z（单位：角度）
 
 
-@dataclass
-class DataGnss:
-    """GNSS数据"""
-
-    pose_gnss: PoseGnss  #: 车辆位姿信息
-
-
 class GearMode(Enum):
     """档位模式"""
 
@@ -305,7 +298,7 @@ class SimCarMsg:
     """仿真动态信息"""
 
     trajectory: list[Vector3]  #: 推荐轨迹
-    data_gnss: DataGnss  #: GNSS 数据
+    pose_gnss: PoseGnss  #: GNSS 数据
     data_main_vehicle: MainVehicleInfo  #: 主车信息
     sensor: SensorInfo  #: 传感器信息
     obstacle_entry_list: list[ObstacleInfo]  #: 障碍物信息

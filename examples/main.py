@@ -89,11 +89,11 @@ def get_vehicle_control_from_algorithm(msg: SimCarMsg) -> VehicleControl:
     vc.throttle, vc.brake = calc_throttle_brake(msg.data_main_vehicle.speed, 15)
     vc.steering = calc_steering(
         Vector3(
-            msg.data_gnss.pose_gnss.pos_x,
-            msg.data_gnss.pose_gnss.pos_y,
-            msg.data_gnss.pose_gnss.pos_z,
+            msg.pose_gnss.pos_x,
+            msg.pose_gnss.pos_y,
+            msg.pose_gnss.pos_z,
         ),
-        -math.radians(msg.data_gnss.pose_gnss.ori_z),
+        -math.radians(msg.pose_gnss.ori_z),
         msg.data_main_vehicle.speed,
         msg.trajectory,
     )

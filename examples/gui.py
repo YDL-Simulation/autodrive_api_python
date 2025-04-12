@@ -51,15 +51,15 @@ def tk_process_func(
         string_vars[2].set("{:.3f}".format(msg.data_main_vehicle.steering))
         string_vars[3].set(msg.data_main_vehicle.gear.name)
         string_vars[4].set("{:.3f}".format(msg.data_main_vehicle.speed))
-        string_vars[5].set("{:.2f}".format(msg.data_gnss.pose_gnss.pos_x))
-        string_vars[6].set("{:.2f}".format(msg.data_gnss.pose_gnss.pos_y))
-        string_vars[7].set("{:.2f}".format(msg.data_gnss.pose_gnss.ori_z))
+        string_vars[5].set("{:.2f}".format(msg.pose_gnss.pos_x))
+        string_vars[6].set("{:.2f}".format(msg.pose_gnss.pos_y))
+        string_vars[7].set("{:.2f}".format(msg.pose_gnss.ori_z))
         # clear canvas
         map_canvas.delete("all")
         canvas_width = map_canvas.winfo_width()
         canvas_height = map_canvas.winfo_height()
         main_vehicle_pos = Vector2(
-            msg.data_gnss.pose_gnss.pos_x, msg.data_gnss.pose_gnss.pos_y
+            msg.pose_gnss.pos_x, msg.pose_gnss.pos_y
         )
 
         SCALE = 10
@@ -94,7 +94,7 @@ def tk_process_func(
             main_vehicle_pos,
             msg.data_main_vehicle.length,
             msg.data_main_vehicle.width,
-            msg.data_gnss.pose_gnss.ori_z,
+            msg.pose_gnss.ori_z,
             "green",
         )
 
