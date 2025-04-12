@@ -80,15 +80,15 @@ class SceneAPI:
         return self._scene_static_data
 
     def main_loop(self):
-        """生成器，每次迭代返回 SimCarMsg 和图像帧，场景结束时退出。
+        """生成器，每次迭代返回 :class:`~metacar.models.SimCarMsg` 和图像帧，场景结束时退出。
 
         此方法是一个生成器，每次迭代会返回当前的仿真车辆消息和摄像头图像帧。
         当场景结束或连接中断时，生成器会自动退出。
 
-        :return: 元组 (SimCarMsg, frame)，其中:
+        :return: 元组 (sim_car_msg, frame)，其中:
 
-            - SimCarMsg: 车辆状态、传感器数据等信息
-            - frame: 当前相机视图，为OpenCV图像格式(numpy.ndarray)，BGR颜色空间，
+            - sim_car_msg: :class:`~metacar.models.SimCarMsg` 对象，包含车辆状态、传感器数据等信息
+            - frame: 当前相机视图，为 OpenCV 图像格式(numpy.ndarray)，BGR 颜色空间，
               通常分辨率为640x480像素
         """
         # 先发送 code2，告知场景已经就绪

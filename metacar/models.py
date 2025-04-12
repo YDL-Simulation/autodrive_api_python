@@ -28,7 +28,7 @@ def parse_data(cls: type[T], data: Any) -> T:
     if isinstance(cls, type) and issubclass(cls, Enum):
         return cls(data)
     if get_origin(cls) is list and isinstance(data, list):
-        return [parse_data(get_args(cls)[0], i) for i in data]
+        return [parse_data(get_args(cls)[0], item) for item in data]
     if is_dataclass(cls) and isinstance(data, dict):
         normalized_data = {_normalize_member_name(k): v for k, v in data.items()}
         cleaned_data = {}
@@ -183,8 +183,8 @@ class EulerAngle:
     """欧拉角"""
 
     ori_x: float  #: 欧拉角 X（单位：角度）
-    ori_y: float
-    ori_z: float
+    ori_y: float  #: 欧拉角 Y（单位：角度）
+    ori_z: float  #: 欧拉角 Z（单位：角度）
 
 
 @dataclass
@@ -225,7 +225,7 @@ class ObstacleType(Enum):
     SPECIAL_VEHICLE = 20  #: 特种车辆
     MOTORCYCLE = 21  #: 摩托车
     DYNAMIC = 22  #: 动态障碍物
-    SPEED_LIMIT_SIGN = 26  #: 限速标志
+    SPEED_LIMIT_SIGN = 26  #: 限速标志（限速值以 "SpeedLimit|30"(单位：km/h) 的格式在 :attr:`ObstacleInfo.redundant_value` 中给出）
     BICYCLE_STATIC = 27  #: 静止自行车
     ROAD_OBSTACLE = 29  #: 道路障碍物
     PARKING_SLOT = 30  #: 停车位

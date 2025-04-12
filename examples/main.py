@@ -3,6 +3,7 @@ import keyboard
 import math
 from metacar import SceneAPI, GearMode, VehicleControl, Vector3, SimCarMsg
 
+# 是否使用 GUI 界面
 USE_GUI = True
 
 if USE_GUI:
