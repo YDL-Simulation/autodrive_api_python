@@ -6,7 +6,6 @@ API 参考
 * :doc:`scene` - 提供与仿真环境进行通信和交互的场景 API
 * :doc:`models` - 定义了与场景交互所需的数据模型和类型
 * :doc:`geometry` - 提供几何计算和向量操作的工具
-* :doc:`sockets` - 实现了与仿真环境通信的底层网络功能
 
 .. toctree::
    :maxdepth: 2
@@ -14,4 +13,3 @@ API 参考
    scene
    models
    geometry
-   sockets

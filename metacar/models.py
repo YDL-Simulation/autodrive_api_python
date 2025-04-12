@@ -52,6 +52,8 @@ def parse_data(cls: type[T], data: Any) -> T:
 
 @dataclass
 class SubSceneInfo:
+    """子场景信息"""
+
     sub_scene_name: str  #: 子场景名称
     start_point: Vector3  #: 起点
     end_point: Vector3  #: 终点
@@ -59,6 +61,8 @@ class SubSceneInfo:
 
 @dataclass
 class MapConfig:
+    """地图配置"""
+
     path: str  #: 地图目录路径
     route: str  #: 路线文件名
     map: str  #: 地图文件名
@@ -66,6 +70,8 @@ class MapConfig:
 
 
 class LineType(Enum):
+    """道路线类型"""
+
     MIDDLE_LINE = 1  #: 中线
     SIDE_LINE = 2  #: 侧线
     SOLID_LINE = 3  #: 实线
@@ -96,6 +102,8 @@ class LaneInfo:
 
 
 class DrivingType(Enum):
+    """行驶类型"""
+
     MOTOR_VEHICLE_ALLOWED = 1  #: 机动车可行驶
     NON_MOTOR_VEHICLE_ALLOWED = 2  #: 非机动车可行驶
     PEDESTRIAN_ALLOWED = 3  #: 行人可行
@@ -308,6 +316,8 @@ class SimCarMsg:
 
 @dataclass
 class VehicleControl:
+    """车辆控制信息"""
+
     throttle: float = 0.0  #: 油门（0~1）
     brake: float = 0.0  #: 刹车（0~1）
     steering: float = 0.0  #: 方向盘（-1~1）

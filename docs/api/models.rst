@@ -5,11 +5,6 @@
 
 MetaCar 库使用了丰富的数据模型来表示场景中的各种元素，包括道路、车辆、交通灯等。这些数据模型都是使用 Python 的 dataclass 实现的，提供了类型提示、自动生成的初始化方法以及更好的代码可读性，使得开发者能够更清晰地理解和使用这些数据结构。
 
-数据解析工具
----------------
-
-.. autofunction:: metacar.models.parse_data
-
 场景和道路相关
 ----------------
 
@@ -19,13 +14,7 @@ MetaCar 库使用了丰富的数据模型来表示场景中的各种元素，包
 .. autoclass:: metacar.SubSceneInfo
    :members:
 
-地图配置
-~~~~~~~~~~~
-
-.. autoclass:: metacar.models.MapConfig
-   :members:
-
-道路标记类型
+道路线类型
 ~~~~~~~~~~~~~~
 
 .. autoclass:: metacar.LineType
@@ -96,14 +85,14 @@ MetaCar 库使用了丰富的数据模型来表示场景中的各种元素，包
 .. autoclass:: metacar.MainVehicleInfo
    :members:
 
+传感器相关
+------------
+
 欧拉角
 ~~~~~~~
 
 .. autoclass:: metacar.models.EulerAngle
    :members:
-
-传感器相关
-------------
 
 摄像头信息
 ~~~~~~~~~~~
@@ -172,8 +161,8 @@ MetaCar 库使用了丰富的数据模型来表示场景中的各种元素，包
 .. autoclass:: metacar.SimCarMsg
    :members:
 
-车辆控制
-~~~~~~~~~~~
+车辆控制信息
+~~~~~~~~~~~~~~
 
 .. autoclass:: metacar.VehicleControl
    :members:
