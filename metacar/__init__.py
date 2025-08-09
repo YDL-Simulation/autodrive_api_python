@@ -3,6 +3,9 @@ __version__ = "0.2.0"
 from .sceneapi import SceneAPI
 from .geometry import Vector2, Vector3
 from .models import (
+    VLAExtension,
+    VLATextOutput,
+    VLAExtensionOutput,
     SubSceneInfo,
     LineType,
     BorderInfo,
@@ -34,6 +37,9 @@ __all__ = [
     "Vector2",
     "Vector3",
     # models
+    "VLAExtension",
+    "VLATextOutput",
+    "VLAExtensionOutput",
     "SubSceneInfo",
     "LineType",
     "BorderInfo",

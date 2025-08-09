@@ -159,3 +159,23 @@ MetaCar 库使用了丰富的数据模型来表示场景中的各种元素，包
 ~~~~~~~~~~~~~~
 
 .. autopydantic_model:: metacar.VehicleControl
+
+VLA 场景相关
+--------------
+
+VLA场景是一类特殊场景，详细说明和使用方法请参见 :doc:`../vla`。
+
+VLA 场景扩展信息
+~~~~~~~~~~~~~~~~~~
+
+.. autopydantic_model:: metacar.VLAExtension
+
+VLA 场景文本输出
+~~~~~~~~~~~~~~~~~~
+
+.. autopydantic_model:: metacar.VLATextOutput
+
+VLA 场景扩展输出
+~~~~~~~~~~~~~~~~~~
+
+.. autopydantic_model:: metacar.VLAExtensionOutput

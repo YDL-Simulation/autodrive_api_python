@@ -16,6 +16,7 @@ MetaCar 是一个智能网联汽车平台的 Python API，用于与仿真环境�
    quickstart
    api/index
    examples
+   vla
 
 特性
 ----

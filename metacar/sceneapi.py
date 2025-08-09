@@ -10,6 +10,7 @@ from .models import (
     VehicleControlDTO,
     RoadInfo,
     SceneStaticData,
+    VLAExtensionOutput,
     Code1,
     Code2,
     Code3,
@@ -55,6 +56,7 @@ class SceneAPI:
             route=route,
             roads=road_lines,
             sub_scenes=map_info.sub_scenes,
+            vla_extension=code1.vla_extension,
         )
 
     def connect(self):
@@ -111,24 +113,25 @@ class SceneAPI:
             self._model_socket.close()
             self._streaming_socket.close()
 
-    def set_vehicle_control(self, vc: VehicleControl):
+    def set_vehicle_control(
+        self, vc: VehicleControl, vla_extension: VLAExtensionOutput | None = None
+    ):
         """发送车辆控制命令到仿真环境
 
         将给定的车辆控制命令发送到场景，用于控制车辆的油门、刹车、转向等行为。
 
         :param vc: 车辆控制命令，包含油门、刹车、转向等参数
+        :param vla_extension: VLA 相关的输出，非 VLA 场景为 None
         """
-        vc_dto = VehicleControlDTO.model_validate(
-            vc.model_dump()
-            | {
-                "move_to_start": self._move_to_start,
-                "move_to_end": self._move_to_end,
-            },
-            by_name=True,
-            by_alias=False,
+        vc_dto = VehicleControlDTO(
+            **vc.model_dump(),
+            move_to_start=self._move_to_start,
+            move_to_end=self._move_to_end,
         )
-        sim_car_msg = SimCarMsgOutput(VehicleControl=vc_dto)
-        self._model_socket.send(Code4(code=4, SimCarMsg=sim_car_msg), Code4)
+        sim_car_msg = SimCarMsgOutput(
+            vehicle_control=vc_dto, vla_extension=vla_extension
+        )
+        self._model_socket.send(Code4(code=4, sim_car_msg=sim_car_msg), Code4)
 
     def retry_level(self):
         """重试关卡

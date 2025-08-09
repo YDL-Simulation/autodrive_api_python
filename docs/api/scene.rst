@@ -44,4 +44,4 @@
         vc.throttle = 0.5
         
         # 发送控制命令
-        api.set_vehicle_control(vc) 
+        api.set_vehicle_control(vc)

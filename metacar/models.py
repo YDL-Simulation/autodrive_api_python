@@ -4,12 +4,61 @@ from enum import Enum
 from .geometry import Vector2, Vector3
 
 
+class BuildingInfo(BaseModel):
+    """建筑物信息"""
+
+    id: str = Field(description="建筑物 ID")
+    name: str = Field(alias="displayName", description="建筑物名称")
+    pos_x: float = Field(alias="posX", description="位置 X")
+    pos_y: float = Field(alias="posY", description="位置 Y")
+    pos_z: float = Field(alias="posZ", description="位置 Z")
+    ori_x: float = Field(alias="oriX", description="欧拉角 X（单位：角度）")
+    ori_y: float = Field(alias="oriY", description="欧拉角 Y（单位：角度）")
+    ori_z: float = Field(alias="oriZ", description="欧拉角 Z（单位：角度）")
+    length: float = Field(description="长度")
+    width: float = Field(description="宽度")
+    height: float = Field(description="高度")
+
+
+class VLAExtension(BaseModel):
+    """VLA 扩展信息"""
+
+    buildings: list[BuildingInfo] = Field(
+        alias="BuildingInfos", description="建筑物信息"
+    )
+
+
+class VLATextOutput(BaseModel):
+    """VLA 场景的文本输出"""
+
+    ocr_text: str = Field(serialization_alias="OcrText", description="OCR 文本")
+    time_phrase: str = Field(serialization_alias="TimeText", description="时间相关片段")
+    location_phrase: str = Field(
+        serialization_alias="LocationText", description="位置相关片段"
+    )
+    action_phrase: str = Field(
+        serialization_alias="ActionText", description="动作相关片段"
+    )
+
+
+class VLAExtensionOutput(BaseModel):
+    """VLA 场景的扩展输出"""
+
+    text_info: VLATextOutput = Field(
+        serialization_alias="TextInfo", description="文本相关输出"
+    )
+
+
 class SubSceneInfo(BaseModel):
     """子场景信息"""
 
     name: str = Field(alias="SubSceneName", description="子场景名称")
-    start_point: Vector3 = Field(alias="StartPoint", description="起点")
-    end_point: Vector3 = Field(alias="EndPoint", description="终点")
+    start_point: Vector3 | None = Field(
+        alias="StartPoint", description="起点（VLA 场景为 None）"
+    )
+    end_point: Vector3 | None = Field(
+        alias="EndPoint", description="终点（VLA 场景为 None）"
+    )
 
 
 class MapConfig(BaseModel):
@@ -91,9 +140,12 @@ class RoadInfo(BaseModel):
 class SceneStaticData(BaseModel):
     """场景静态信息"""
 
-    route: list[Vector3] = Field(description="路线")
-    roads: list[RoadInfo] = Field(description="道路信息")
+    route: list[Vector3] = Field(description="路线（VLA 场景为空列表）")
+    roads: list[RoadInfo] = Field(description="道路信息（VLA 场景为空列表）")
     sub_scenes: list[SubSceneInfo] = Field(description="子场景信息")
+    vla_extension: VLAExtension | None = Field(
+        description="VLA 扩展信息，该字段不为 None 时表示是 VLA 场景",
+    )
 
 
 class PoseGnss(BaseModel):
@@ -263,7 +315,9 @@ class SceneStatus(BaseModel):
     sub_scene_name: str = Field(alias="SubSceneName", description="子场景名称")
     used_time: float = Field(alias="UsedTime", description="已用时间")
     time_limit: float = Field(alias="TimeLimit", description="时间限制")
-    end_point: Vector3 = Field(alias="EndPoint", description="终点")
+    end_point: Vector3 | None = Field(
+        alias="EndPoint", description="终点（VLA 场景为 None）"
+    )
 
 
 class SimCarMsg(BaseModel):
@@ -305,25 +359,35 @@ class VehicleControlDTO(BaseModel):
     steering: float = Field(default=0.0, description="方向盘（-1~1）")
     gear: GearMode = Field(default=GearMode.DRIVE, description="档位")
     left_blinker_on: bool = Field(
-        alias="Signal_Light_LeftBlinker", default=False, description="左转向灯"
+        serialization_alias="Signal_Light_LeftBlinker",
+        default=False,
+        description="左转向灯",
     )
     right_blinker_on: bool = Field(
-        alias="Signal_Light_RightBlinker", default=False, description="右转向灯"
+        serialization_alias="Signal_Light_RightBlinker",
+        default=False,
+        description="右转向灯",
     )
     hazard_lights_on: bool = Field(
-        alias="Signal_Light_DoubleFlash", default=False, description="双闪"
+        serialization_alias="Signal_Light_DoubleFlash",
+        default=False,
+        description="双闪",
     )
     headlights_on: bool = Field(
-        alias="Signal_Light_FrontLight", default=False, description="前灯"
+        serialization_alias="Signal_Light_FrontLight", default=False, description="前灯"
     )
-    move_to_start: int = Field(alias="movetostart", description="重开")
-    move_to_end: int = Field(alias="movetoend", description="跳关")
+    move_to_start: int = Field(serialization_alias="movetostart", description="重开")
+    move_to_end: int = Field(serialization_alias="movetoend", description="跳关")
 
 
 class SimCarMsgOutput(BaseModel):
     """code4 中使用的输出结构"""
 
-    vehicle_control: VehicleControlDTO = Field(alias="VehicleControl")
+    vehicle_control: VehicleControlDTO = Field(serialization_alias="VehicleControl")
+    vla_extension: VLAExtensionOutput | None = Field(
+        serialization_alias="VLAExtension",
+        description="VLA 相关的输出，非 VLA 场景时为 None",
+    )
 
 
 class Code1(BaseModel):
@@ -331,6 +395,10 @@ class Code1(BaseModel):
 
     code: Literal[1]
     map_info: MapConfig = Field(alias="MapInfo")
+    vla_extension: VLAExtension | None = Field(
+        alias="VLAExtension",
+        description="VLA 扩展信息，如果为 None 则表示不是 VLA 场景",
+    )
 
 
 class Code2(BaseModel):
@@ -350,7 +418,7 @@ class Code4(BaseModel):
     """code4 接口模型，发送控制信息"""
 
     code: Literal[4]
-    sim_car_msg: SimCarMsgOutput = Field(alias="SimCarMsg")
+    sim_car_msg: SimCarMsgOutput = Field(serialization_alias="SimCarMsg")
 
 
 class Code5(BaseModel):

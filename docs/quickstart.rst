@@ -76,6 +76,8 @@
         
         # 进入主循环
         for sim_car_msg, frame in api.main_loop():
+            # 这里可以添加图像处理、决策逻辑等
+
             # 创建简单的前进控制
             vc = VehicleControl()
             vc.gear = GearMode.DRIVE
@@ -87,12 +89,15 @@
             # 记录信息
             logger.info(f"当前速度: {sim_car_msg.data_main_vehicle.speed}")
             
-            # 这里可以添加图像处理、决策逻辑等
-            
         logger.info("仿真结束")
 
     if __name__ == "__main__":
         main()
+
+VLA 场景（可选）
+------------------
+
+如遇到 VLA（Vision-Language-Action）特殊场景，需要在每个子场景中识别指示牌上的文字并提交一次解析结果，详见 :doc:`/vla`。
 
 下一步
 ----------

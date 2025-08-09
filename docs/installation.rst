@@ -34,7 +34,7 @@ MetaCar 依赖以下库，在安装过程中会自动安装：
 
 * OpenCV (cv2) - 用于图像处理
 * NumPy - 用于科学计算
-* pydantic - 用于数据模型
+* Pydantic - 用于数据模型
 
 验证安装
 --------

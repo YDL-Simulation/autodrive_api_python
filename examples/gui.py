@@ -147,6 +147,28 @@ def tk_process_func(
             ]
             map_canvas.create_line(points, fill=ROADLINE_COLOR_MAP[line.type])
 
+        # 判断是否是 VLA 场景
+        if scene_static_data.vla_extension:
+            # 绘制建筑物
+            for building in scene_static_data.vla_extension.buildings:
+                # 绘制建筑物边框
+                pos = Vector2(building.pos_x, building.pos_y)
+                draw_rectangle(
+                    pos,
+                    building.length,
+                    building.width,
+                    building.ori_z,
+                    "blue",
+                )
+                # 在建筑物中心显示名称
+                center_pos = convert_pos(pos)
+                map_canvas.create_text(
+                    center_pos[0],
+                    center_pos[1],
+                    text=building.name,
+                    fill="blue",
+                )
+
     def check_message():
         """检查管道，如果有消息则处理。"""
         start_time = time.time()
