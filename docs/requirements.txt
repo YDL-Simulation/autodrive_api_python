@@ -2,3 +2,4 @@ sphinx==8.2.3
 sphinx-rtd-theme==3.0.2
 opencv-python==4.11.0.86
 numpy==2.2.3
+autodoc_pydantic==2.2.0

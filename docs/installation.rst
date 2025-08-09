@@ -4,7 +4,7 @@
 系统要求
 --------
 
-* Python 3.9 或更高版本
+* Python 3.10 或更高版本
 * 网络连接，用于与服务器通信
 
 通过 pip 安装
@@ -34,7 +34,7 @@ MetaCar 依赖以下库，在安装过程中会自动安装：
 
 * OpenCV (cv2) - 用于图像处理
 * NumPy - 用于科学计算
-* keyboard - 用于示例中的键盘控制 (仅示例代码需要)
+* pydantic - 用于数据模型
 
 验证安装
 --------
@@ -44,4 +44,4 @@ MetaCar 依赖以下库，在安装过程中会自动安装：
 .. code-block:: python
 
     import metacar
-    print(metacar.__version__) 
+    print(metacar.__version__)

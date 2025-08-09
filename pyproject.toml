@@ -9,7 +9,7 @@ authors = [
 ]
 description = "智能网联平台API"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
@@ -20,6 +20,7 @@ dynamic = ["version"]
 dependencies = [
     "numpy>=2.0.0",
     "opencv-python>=4.5.0",
+    "pydantic>=2.0.0",
 ]
 
 [project.urls]

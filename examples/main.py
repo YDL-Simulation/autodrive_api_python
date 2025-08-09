@@ -87,7 +87,7 @@ def get_vehicle_control_from_algorithm(msg: SimCarMsg) -> VehicleControl:
     vc = VehicleControl()
     vc.gear = GearMode.DRIVE
     # 目前只支持固定速度
-    vc.throttle, vc.brake = calc_throttle_brake(msg.data_main_vehicle.speed, 15)
+    vc.throttle, vc.brake = calc_throttle_brake(msg.main_vehicle.speed, 15)
     vc.steering = calc_steering(
         Vector3(
             msg.pose_gnss.pos_x,
@@ -95,7 +95,7 @@ def get_vehicle_control_from_algorithm(msg: SimCarMsg) -> VehicleControl:
             msg.pose_gnss.pos_z,
         ),
         -math.radians(msg.pose_gnss.ori_z),
-        msg.data_main_vehicle.speed,
+        msg.main_vehicle.speed,
         msg.trajectory,
     )
     return vc

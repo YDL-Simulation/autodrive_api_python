@@ -1,4 +1,4 @@
-from dataclasses import dataclass, astuple
+from pydantic.dataclasses import dataclass
 import math
 
 
@@ -7,12 +7,8 @@ class Vector2:
     x: float  #: x 坐标
     y: float  #: y 坐标
 
-    def __init__(self, x, y):
-        self.x = float(x)
-        self.y = float(y)
-
     def __iter__(self):
-        return iter(astuple(self))
+        return iter((self.x, self.y))
 
     def __pos__(self):
         return self
@@ -21,17 +17,9 @@ class Vector2:
         return Vector2(*(-a for a in self))
 
     def __add__(self, other: "Vector2"):
-        if not isinstance(other, Vector2):
-            raise TypeError(
-                f"unsupported operand type(s) for +: 'Vector2' and '{type(other).__name__}'"
-            )
         return Vector2(*(a + b for a, b in zip(self, other)))
 
     def __sub__(self, other: "Vector2"):
-        if not isinstance(other, Vector2):
-            raise TypeError(
-                f"unsupported operand type(s) for -: 'Vector2' and '{type(other).__name__}'"
-            )
         return Vector2(*(a - b for a, b in zip(self, other)))
 
     def __mul__(self, other: float):
@@ -46,7 +34,7 @@ class Vector2:
         """标量除法。"""
         return Vector2(*(a / other for a in self))
 
-    def rotate_rad(self, radians) -> "Vector2":
+    def rotate_rad(self, radians: float) -> "Vector2":
         """绕原点旋转向量。
 
         将向量绕原点按逆时针方向旋转指定的弧度。
@@ -77,13 +65,8 @@ class Vector3:
     y: float  #: y 坐标
     z: float  #: z 坐标
 
-    def __init__(self, x, y, z):
-        self.x = float(x)
-        self.y = float(y)
-        self.z = float(z)
-
     def __iter__(self):
-        return iter(astuple(self))
+        return iter((self.x, self.y, self.z))
 
     def __pos__(self):
         return self
@@ -92,17 +75,9 @@ class Vector3:
         return Vector3(*(-a for a in self))
 
     def __add__(self, other: "Vector3"):
-        if not isinstance(other, Vector3):
-            raise TypeError(
-                f"unsupported operand type(s) for +: 'Vector3' and '{type(other).__name__}'"
-            )
         return Vector3(*(a + b for a, b in zip(self, other)))
 
     def __sub__(self, other: "Vector3"):
-        if not isinstance(other, Vector3):
-            raise TypeError(
-                f"unsupported operand type(s) for -: 'Vector3' and '{type(other).__name__}'"
-            )
         return Vector3(*(a - b for a, b in zip(self, other)))
 
     def __mul__(self, other: float):

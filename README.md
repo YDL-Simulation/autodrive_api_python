@@ -62,9 +62,7 @@ for sim_car_msg, frame in api.main_loop():
 
 ## 系统要求
 
-- Python 3.9 或更高版本
-- OpenCV (cv2)
-- NumPy
+- Python 3.10 或更高版本
 
 ## 许可证
 

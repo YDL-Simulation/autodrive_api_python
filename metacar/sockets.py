@@ -2,8 +2,9 @@ import cv2
 import numpy as np
 import socket
 import struct
-import json
 import logging
+from typing import Any
+from pydantic import TypeAdapter
 
 logger = logging.getLogger(__name__)
 
@@ -12,9 +13,9 @@ class ConnectionClosedError(ConnectionError):
     pass
 
 
-class SocketBase:
+class RawSocket:
     """
-    一个简单的 TCP 服务器基类，实现基于长度 + 内容格式的基本分包。
+    一个简单的 TCP 服务器类，实现基于长度 + 内容格式的基本分包。
     长度为 4 字节的无符号整数，使用网络字节序（大端序）。
     仅支持单个客户端连接。
     """
@@ -83,6 +84,8 @@ class SocketBase:
         :param size: 需要接收的字节数。
         :return: 接收到的字节数据，如果连接已关闭则返回空字节。
         """
+        # recv 函数里面检查过了，这里简单 assert 一下，防止类型检查报错
+        assert self._conn is not None, "无客户端连接"
         data = bytearray()
         while len(data) < size:
             chunk = self._conn.recv(size - len(data))
@@ -101,44 +104,62 @@ class SocketBase:
         logger.info(f"{self._host}:{self._port}已关闭")
 
 
-class JsonSocket(SocketBase):
+class ModelSocket:
     """
-    支持双向 JSON 通信的 Socket。
+    支持在每次收发时动态指定类型的 Pydantic Socket。
+
+    发送时会将数据按照指定类型序列化为 JSON，
+    接收时会解析为该类型的实例。
     """
 
-    def send(self, data):
-        """
-        发送 JSON 数据。
+    def __init__(self, host: str, port: int):
+        self._raw_socket = RawSocket(host, port)
 
-        :param data: 需要发送的 JSON 数据。
-        """
-        return super().send(json.dumps(data).encode())
+    def accept(self):
+        return self._raw_socket.accept()
 
-    def recv(self):
-        """
-        接收 JSON 数据。
+    def close(self):
+        return self._raw_socket.close()
 
-        :return: 接收到的 JSON 数据。
+    def send(self, data: Any, type_: Any):
+        """
+        发送数据（自动 JSON 序列化）。
+
+        :param data: 要发送的数据。
+        :param type_: 数据的类型（可为 BaseModel、list[...]、tuple[...] 等）。
+        """
+        adapter = TypeAdapter(type_)
+        json_bytes = adapter.dump_json(data, by_alias=True)
+        self._raw_socket.send(json_bytes)
+
+    def recv(self, type_: Any) -> Any:
+        """
+        接收数据（自动 JSON 反序列化）。
+
+        :param type_: 目标类型（可为 BaseModel、list[...]、tuple[...] 等）。
+        :return: 解析后的对象。
         :raises ConnectionClosedError: 当连接已关闭时抛出。
         """
-        raw_data = super().recv()
+        raw_data = self._raw_socket.recv()
         if not raw_data:
             raise ConnectionClosedError("连接已关闭")
-        return json.loads(raw_data)
+        adapter = TypeAdapter(type_)
+        return adapter.validate_json(raw_data)
 
 
-class StreamingSocket(SocketBase):
+class StreamingSocket:
     """
     支持单向接收视频流的 Socket。
     """
 
-    def send(self, data):
-        """
-        由于是单向接收视频流，禁用 send 方法。
+    def __init__(self, host: str, port: int):
+        self._raw_socket = RawSocket(host, port)
 
-        :raises NotImplementedError: 该方法未实现。
-        """
-        raise NotImplementedError("send is not supported for StreamingSocket")
+    def accept(self):
+        return self._raw_socket.accept()
+
+    def close(self):
+        return self._raw_socket.close()
 
     def recv(self):
         """
@@ -148,7 +169,7 @@ class StreamingSocket(SocketBase):
         :rtype: numpy.ndarray
         :raises ConnectionClosedError: 当连接已关闭时抛出。
         """
-        raw_image = super().recv()
+        raw_image = self._raw_socket.recv()
         if not raw_image:
             raise ConnectionClosedError("连接已关闭")
         frame = cv2.imdecode(np.frombuffer(raw_image, np.uint8), cv2.IMREAD_COLOR)

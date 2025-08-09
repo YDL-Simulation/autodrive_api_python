@@ -28,7 +28,7 @@ class LineInfo:
     points: list[Vector2]
 
 
-class Message(Enum):
+class MsgType(Enum):
     UPDATE = auto()
     QUIT = auto()
 
@@ -46,11 +46,11 @@ def tk_process_func(
     }
 
     def update(msg: SimCarMsg):
-        string_vars[0].set("{:.3f}".format(msg.data_main_vehicle.throttle))
-        string_vars[1].set("{:.3f}".format(msg.data_main_vehicle.brake))
-        string_vars[2].set("{:.3f}".format(msg.data_main_vehicle.steering))
-        string_vars[3].set(msg.data_main_vehicle.gear.name)
-        string_vars[4].set("{:.3f}".format(msg.data_main_vehicle.speed))
+        string_vars[0].set("{:.3f}".format(msg.main_vehicle.throttle))
+        string_vars[1].set("{:.3f}".format(msg.main_vehicle.brake))
+        string_vars[2].set("{:.3f}".format(msg.main_vehicle.steering))
+        string_vars[3].set(msg.main_vehicle.gear.name)
+        string_vars[4].set("{:.3f}".format(msg.main_vehicle.speed))
         string_vars[5].set("{:.2f}".format(msg.pose_gnss.pos_x))
         string_vars[6].set("{:.2f}".format(msg.pose_gnss.pos_y))
         string_vars[7].set("{:.2f}".format(msg.pose_gnss.ori_z))
@@ -58,9 +58,7 @@ def tk_process_func(
         map_canvas.delete("all")
         canvas_width = map_canvas.winfo_width()
         canvas_height = map_canvas.winfo_height()
-        main_vehicle_pos = Vector2(
-            msg.pose_gnss.pos_x, msg.pose_gnss.pos_y
-        )
+        main_vehicle_pos = Vector2(msg.pose_gnss.pos_x, msg.pose_gnss.pos_y)
 
         SCALE = 10
 
@@ -92,14 +90,14 @@ def tk_process_func(
         # 绘制主车
         draw_rectangle(
             main_vehicle_pos,
-            msg.data_main_vehicle.length,
-            msg.data_main_vehicle.width,
+            msg.main_vehicle.length,
+            msg.main_vehicle.width,
             msg.pose_gnss.ori_z,
             "green",
         )
 
         # 绘制障碍物
-        for obstacle in msg.obstacle_entry_list:
+        for obstacle in msg.obstacles:
             draw_rectangle(
                 Vector2(obstacle.pos_x, obstacle.pos_y),
                 obstacle.length,
@@ -156,9 +154,9 @@ def tk_process_func(
         if conn.poll():
             message = conn.recv()
             match message["type"]:
-                case Message.UPDATE:
+                case MsgType.UPDATE:
                     update(message["msg"])
-                case Message.QUIT:
+                case MsgType.QUIT:
                     root.destroy()
 
         # 计算下一次调用 check_message 的时间
@@ -168,15 +166,15 @@ def tk_process_func(
 
     # 先把所有需要绘制的车道线提取出来
     line_list: list[LineInfo] = []
-    for road_line in scene_static_data.road_lines:
+    for road_line in scene_static_data.roads:
         if road_line.stop_line:
             line_list.append(LineInfo(LineType.STOP_LINE, road_line.stop_line))
-        for lane in road_line.lane_data:
+        for lane in road_line.lanes:
             line_list.append(
-                LineInfo(lane.left_border.border_type, lane.left_border.path_point)
+                LineInfo(lane.left_border.type, lane.left_border.path_points)
             )
             line_list.append(
-                LineInfo(lane.right_border.border_type, lane.right_border.path_point)
+                LineInfo(lane.right_border.type, lane.right_border.path_points)
             )
 
     # 建 kdtree
@@ -192,7 +190,7 @@ def tk_process_func(
     root.title("仪表盘")
 
     mainframe = ttk.Frame(root, padding="4 4 4 4")
-    mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
+    mainframe.grid(column=0, row=0, sticky="NSEW")
     root.columnconfigure(0, weight=1)
     root.rowconfigure(0, weight=1)
     # 设置数值列的最小宽度，使得数值列的宽度不会随着数值的变化而变化
@@ -215,7 +213,7 @@ def tk_process_func(
         relief="groove",
         background="white",
     )
-    map_canvas.grid(column=2, row=0, rowspan=len(labels), sticky=(N, W, E, S))
+    map_canvas.grid(column=2, row=0, rowspan=len(labels), sticky="NSEW")
 
     # 窗口大小改变时，将空间分配给画布
     mainframe.grid_columnconfigure(2, weight=1)
@@ -256,10 +254,10 @@ class Dashboard:
     def update(self, msg: SimCarMsg):
         """更新仪表盘的方法。"""
         if self._tk_process.is_alive():
-            self._conn.send({"type": Message.UPDATE, "msg": msg})
+            self._conn.send({"type": MsgType.UPDATE, "msg": msg})
 
     def quit(self):
         """退出仪表盘的方法。"""
         if self._tk_process.is_alive():
-            self._conn.send({"type": Message.QUIT})
+            self._conn.send({"type": MsgType.QUIT})
         self._tk_process.join()

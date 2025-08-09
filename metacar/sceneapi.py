@@ -1,15 +1,20 @@
 import logging
-import json
 from pathlib import Path
-from .sockets import JsonSocket, StreamingSocket, ConnectionClosedError
+from pydantic import TypeAdapter, Field
+from typing import Annotated
+from .sockets import ModelSocket, StreamingSocket, ConnectionClosedError
 from .geometry import Vector3
 from .models import (
-    parse_data,
-    MapConfig,
-    SimCarMsg,
+    SimCarMsgOutput,
     VehicleControl,
+    VehicleControlDTO,
     RoadInfo,
     SceneStaticData,
+    Code1,
+    Code2,
+    Code3,
+    Code4,
+    Code5,
 )
 
 logger = logging.getLogger(__name__)
@@ -28,29 +33,28 @@ class SceneAPI:
         """
         self._move_to_start = 0
         self._move_to_end = 0
-        self._json_socket = JsonSocket("127.0.0.1", 5061)
+        self._model_socket = ModelSocket("127.0.0.1", 5061)
         self._streaming_socket = StreamingSocket("127.0.0.1", 5063)
 
-    def _load_static_data(self, map_config_info: MapConfig):
+    def _load_static_data(self, code1: Code1):
         """读取文件内容，组装场景静态信息。
 
         从指定的地图配置中读取路径文件和地图文件，解析后组装成场景静态信息。
 
-        :param map_config_info: 地图配置信息，包含路径、文件位置等
+        :param code1: 场景发送的 code1 消息
         """
-        dir_path = Path(map_config_info.path)
-        route_path = dir_path / map_config_info.route
-        with route_path.open() as route_file:
-            route_json = json.load(route_file)
-        route = parse_data(list[Vector3], route_json)
-        map_path = dir_path / map_config_info.map
-        with map_path.open() as map_file:
-            map_json = json.load(map_file)
-        road_lines = parse_data(list[RoadInfo], map_json)
+        map_info = code1.map_info
+        dir_path = Path(map_info.path)
+        route_path = dir_path / map_info.route
+        with route_path.open("rb") as route_file:
+            route = TypeAdapter(list[Vector3]).validate_json(route_file.read())
+        map_path = dir_path / map_info.map
+        with map_path.open("rb") as map_file:
+            road_lines = TypeAdapter(list[RoadInfo]).validate_json(map_file.read())
         self._scene_static_data = SceneStaticData(
             route=route,
-            road_lines=road_lines,
-            sub_scenes=map_config_info.sub_scene_info,
+            roads=road_lines,
+            sub_scenes=map_info.sub_scenes,
         )
 
     def connect(self):
@@ -59,15 +63,10 @@ class SceneAPI:
         此方法会阻塞执行，直到成功与仿真环境建立连接并完成握手。
         连接成功后会加载场景静态数据，可通过 get_scene_static_data() 获取。
         """
-        self._json_socket.accept()  # 连接 json socket
+        self._model_socket.accept()  # 连接 json socket
         self._streaming_socket.accept()  # 连接视频流
-        message = self._json_socket.recv()
-        code = message["code"]
-        if code != 1:
-            logger.error(f"握手失败，code: {code}")
-            raise RuntimeError(f"握手失败，code: {code}")
-        map_config_info = parse_data(MapConfig, message["MapInfo"])
-        self._load_static_data(map_config_info)
+        code1: Code1 = self._model_socket.recv(Code1)
+        self._load_static_data(code1)
 
     def get_scene_static_data(self):
         """获取场景静态信息，仅在 connect() 函数调用后可用
@@ -92,26 +91,24 @@ class SceneAPI:
               通常分辨率为640x480像素
         """
         # 先发送 code2，告知场景已经就绪
-        code2 = {"code": 2}
-        self._json_socket.send(code2)
+        self._model_socket.send(Code2(code=2), Code2)
         # 进入主循环，持续从场景接收消息
         try:
             while True:
-                message = self._json_socket.recv()
-                code = message["code"]
-                if code == 5:
+                message: Code3 | Code5 = self._model_socket.recv(
+                    Annotated[Code3 | Code5, Field(discriminator="code")]
+                )
+                if isinstance(message, Code5):
                     logger.info("场景结束")
                     return
-                # 确保 code 为 3
-                assert code == 3, f"Expected code 3, but got code {code}"
-                sim_car_msg = parse_data(SimCarMsg, message["SimCarMsg"])
+                sim_car_msg = message.sim_car_msg
                 frame = self._streaming_socket.recv()
                 yield sim_car_msg, frame
         except ConnectionClosedError:
             logger.warning("连接中断，退出场景")
             return
         finally:
-            self._json_socket.close()
+            self._model_socket.close()
             self._streaming_socket.close()
 
     def set_vehicle_control(self, vc: VehicleControl):
@@ -121,25 +118,17 @@ class SceneAPI:
 
         :param vc: 车辆控制命令，包含油门、刹车、转向等参数
         """
-        vc_dict = {
-            "throttle": vc.throttle,
-            "brake": vc.brake,
-            "steering": vc.steering,
-            "gear": vc.gear.value,
-            "Signal_Light_LeftBlinker ": vc.left_blinker,
-            "Signal_Light_RightBlinker": vc.right_blinker,
-            "Signal_Light_DoubleFlash ": vc.double_flash,
-            "Signal_Light_FrontLight": vc.front_light,
-            "movetostart": self._move_to_start,
-            "movetoend": self._move_to_end,
-        }
-        message = {
-            "code": 4,
-            "SimCarMsg": {
-                "VehicleControl": vc_dict,
+        vc_dto = VehicleControlDTO.model_validate(
+            vc.model_dump()
+            | {
+                "move_to_start": self._move_to_start,
+                "move_to_end": self._move_to_end,
             },
-        }
-        self._json_socket.send(message)
+            by_name=True,
+            by_alias=False,
+        )
+        sim_car_msg = SimCarMsgOutput(VehicleControl=vc_dto)
+        self._model_socket.send(Code4(code=4, SimCarMsg=sim_car_msg), Code4)
 
     def retry_level(self):
         """重试关卡
