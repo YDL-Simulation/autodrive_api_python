@@ -396,6 +396,7 @@ class Code1(BaseModel):
     code: Literal[1]
     map_info: MapConfig = Field(alias="MapInfo")
     vla_extension: VLAExtension | None = Field(
+        default=None,
         alias="VLAExtension",
         description="VLA 扩展信息，如果为 None 则表示不是 VLA 场景",
     )

@@ -11,6 +11,7 @@ import time
 from enum import Enum, auto
 import math
 from dataclasses import dataclass
+import numpy as np
 from scipy.spatial import KDTree
 from metacar import (
     Vector2,
@@ -188,10 +189,10 @@ def tk_process_func(
 
     # 先把所有需要绘制的车道线提取出来
     line_list: list[LineInfo] = []
-    for road_line in scene_static_data.roads:
-        if road_line.stop_line:
-            line_list.append(LineInfo(LineType.STOP_LINE, road_line.stop_line))
-        for lane in road_line.lanes:
+    for road in scene_static_data.roads:
+        if road.stop_line:
+            line_list.append(LineInfo(LineType.STOP_LINE, road.stop_line))
+        for lane in road.lanes:
             line_list.append(
                 LineInfo(lane.left_border.type, lane.left_border.path_points)
             )
@@ -200,13 +201,16 @@ def tk_process_func(
             )
 
     # 建 kdtree
-    road_lines_points: list[tuple[float, float]] = []
+    tmp_line_points: list[tuple[float, float]] = []
     point_info: list[tuple[int, int]] = []
     for line_idx, line in enumerate(line_list):
         for point_idx, point in enumerate(line.points):
-            road_lines_points.append((point.x, point.y))
+            tmp_line_points.append((point.x, point.y))
             point_info.append((line_idx, point_idx))
-    kdtree = KDTree(road_lines_points)
+    # 将 tmp_points 转换为 numpy 数组，并 reshape 为 (N, 2) 的形状，避免数组为空时建树失败
+    line_points = np.array(tmp_line_points, dtype=float).reshape(-1, 2)
+    del tmp_line_points
+    kdtree = KDTree(line_points)
 
     root = Tk()
     root.title("仪表盘")
