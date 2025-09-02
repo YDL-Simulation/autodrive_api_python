@@ -5,6 +5,7 @@ from typing import Annotated
 from .sockets import ModelSocket, StreamingSocket, ConnectionClosedError
 from .geometry import Vector3
 from .models import (
+    CameraFrame,
     SimCarMsgOutput,
     VehicleControl,
     VehicleControlDTO,
@@ -86,11 +87,10 @@ class SceneAPI:
         此方法是一个生成器，每次迭代会返回当前的仿真车辆消息和摄像头图像帧。
         当场景结束或连接中断时，生成器会自动退出。
 
-        :return: 元组 (sim_car_msg, frame)，其中:
+        :return: 元组 (sim_car_msg, frames)，其中:
 
             - sim_car_msg: :class:`~metacar.models.SimCarMsg` 对象，包含车辆状态、传感器数据等信息
-            - frame: 当前相机视图，为 OpenCV 图像格式(numpy.ndarray)，BGR 颜色空间，
-              通常分辨率为640x480像素
+            - frames: 当前相机视图的列表，每个元素为 :class:`~metacar.models.CameraFrame` 对象
         """
         # 先发送 code2，告知场景已经就绪
         self._model_socket.send(Code2(code=2), Code2)
@@ -104,8 +104,11 @@ class SceneAPI:
                     logger.info("场景结束")
                     return
                 sim_car_msg = message.sim_car_msg
-                frame = self._streaming_socket.recv()
-                yield sim_car_msg, frame
+                frames = [
+                    CameraFrame(id=camera_info.id, frame=self._streaming_socket.recv())
+                    for camera_info in sim_car_msg.sensor.ego_rgb_cams
+                ]
+                yield sim_car_msg, frames
         except ConnectionClosedError:
             logger.warning("连接中断，退出场景")
             return

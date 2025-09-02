@@ -1,6 +1,8 @@
 from typing import Literal
 from pydantic import BaseModel, Field
 from enum import Enum
+import numpy as np
+from dataclasses import dataclass
 from .geometry import Vector2, Vector3
 
 
@@ -426,3 +428,11 @@ class Code5(BaseModel):
     """code5 接口模型，接收场景结束信息"""
 
     code: Literal[5]
+
+
+@dataclass
+class CameraFrame:
+    """摄像头图像数据"""
+
+    id: str  #: 对应 :attr:`CameraInfo.id`
+    frame: np.ndarray  #: 图像数据

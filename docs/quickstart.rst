@@ -36,9 +36,9 @@
 
 .. code-block:: python
 
-    for sim_car_msg, frame in api.main_loop():
+    for sim_car_msg, frames in api.main_loop():
         # sim_car_msg 包含车辆状态、传感器数据、障碍物信息等
-        # frame 是当前相机视图（OpenCV 格式的图像）
+        # frames 是当前相机视图的列表，每个元素为 CameraFrame 对象
         
         # 创建控制命令
         control = VehicleControl()
@@ -75,7 +75,7 @@
         logger.info(f"路线点数量: {len(static_data.route)}")
         
         # 进入主循环
-        for sim_car_msg, frame in api.main_loop():
+        for sim_car_msg, frames in api.main_loop():
             # 这里可以添加图像处理、决策逻辑等
 
             # 创建简单的前进控制

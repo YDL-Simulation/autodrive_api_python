@@ -31,7 +31,7 @@ api.connect()
 static_data = api.get_scene_static_data()
 
 # 主循环
-for sim_car_msg, frame in api.main_loop():
+for sim_car_msg, frames in api.main_loop():
     # 创建控制命令
     vc = VehicleControl()
     vc.throttle = 0.5  # 设置油门 (0-1)

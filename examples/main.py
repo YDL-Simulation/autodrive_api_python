@@ -121,7 +121,7 @@ def main():
         logger.info("启动 GUI 界面")
     logger.info("开始场景")
 
-    for sim_car_msg, frame in api.main_loop():
+    for sim_car_msg, frames in api.main_loop():
         if use_keyboard:
             vehicle_control = get_vehicle_control_from_keyboard()
         else:

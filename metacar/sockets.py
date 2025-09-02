@@ -161,7 +161,7 @@ class StreamingSocket:
     def close(self):
         return self._raw_socket.close()
 
-    def recv(self):
+    def recv(self) -> np.ndarray:
         """
         接收视频帧。
 

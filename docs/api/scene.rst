@@ -38,7 +38,7 @@
     print(f"路线点数: {len(static_data.route)}")
     
     # 主循环
-    for sim_car_msg, frame in api.main_loop():
+    for sim_car_msg, frames in api.main_loop():
         # 创建控制命令
         vc = VehicleControl()
         vc.throttle = 0.5

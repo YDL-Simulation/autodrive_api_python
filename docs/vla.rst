@@ -38,7 +38,7 @@ VLA（Vision-Language-Action）场景是一类特殊场景。在该类场景中�
     api = SceneAPI()
     api.connect()
 
-    for sim_car_msg, frame in api.main_loop():
+    for sim_car_msg, frames in api.main_loop():
         vc = VehicleControl(throttle=0.3)
         vla_payload = VLAExtensionOutput(
             text_info=VLATextOutput(

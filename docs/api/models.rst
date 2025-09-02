@@ -160,6 +160,12 @@ MetaCar 库使用了丰富的数据模型来表示场景中的各种元素，包
 
 .. autopydantic_model:: metacar.VehicleControl
 
+摄像头图像数据
+~~~~~~~~~~~~~~~~
+
+.. autoclass:: metacar.CameraFrame
+   :members:
+
 VLA 场景相关
 --------------
 

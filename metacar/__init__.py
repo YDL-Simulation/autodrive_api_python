@@ -1,4 +1,4 @@
-__version__ = "0.3.0a2"
+__version__ = "0.3.0a3"
 
 from .sceneapi import SceneAPI
 from .geometry import Vector2, Vector3
@@ -27,6 +27,7 @@ from .models import (
     SceneStatus,
     SimCarMsg,
     VehicleControl,
+    CameraFrame,
 )
 
 __all__ = [
@@ -61,4 +62,5 @@ __all__ = [
     "SceneStatus",
     "SimCarMsg",
     "VehicleControl",
+    "CameraFrame",
 ]
