@@ -171,6 +171,24 @@ VLA 场景相关
 
 VLA场景是一类特殊场景，详细说明和使用方法请参见 :doc:`../vla`。
 
+VLA 建筑物信息
+~~~~~~~~~~~~~~~~~~
+
+.. autopydantic_model:: metacar.BuildingInfo
+
+VLA 区域类型
+~~~~~~~~~~~~~~~~~~
+
+.. autoclass:: metacar.RegionType
+   :members:
+   :member-order: bysource
+   :show-inheritance:
+
+VLA 区域信息
+~~~~~~~~~~~~~~~~~~
+
+.. autopydantic_model:: metacar.RegionInfo
+
 VLA 场景扩展信息
 ~~~~~~~~~~~~~~~~~~
 
@@ -180,6 +198,21 @@ VLA 场景文本输出
 ~~~~~~~~~~~~~~~~~~
 
 .. autopydantic_model:: metacar.VLATextOutput
+
+VLA 功能区违规信息
+~~~~~~~~~~~~~~~~~~~
+
+.. autopydantic_model:: metacar.FunctionZoneViolation
+
+VLA 功能区检测结果
+~~~~~~~~~~~~~~~~~~~
+
+.. autopydantic_model:: metacar.FunctionZoneResult
+
+VLA 停车区检测结果
+~~~~~~~~~~~~~~~~~~~
+
+.. autopydantic_model:: metacar.ParkingResult
 
 VLA 场景扩展输出
 ~~~~~~~~~~~~~~~~~~

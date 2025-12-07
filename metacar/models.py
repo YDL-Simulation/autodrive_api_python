@@ -22,12 +22,36 @@ class BuildingInfo(BaseModel):
     height: float = Field(description="高度")
 
 
+class RegionType(Enum):
+    """区域类型"""
+
+    NORMAL_PARKING = 0  #: 正常停车区
+    RESTRICTED_PARKING = 1  #: 禁停区
+    FUNCTION_ZONE = 2  #: 功能区
+
+
+class RegionInfo(BaseModel):
+    """区域信息"""
+
+    id: str = Field(description="区域 ID")
+    type: RegionType = Field(description="区域类型")
+    pos_x: float = Field(alias="posX", description="位置 X")
+    pos_y: float = Field(alias="posY", description="位置 Y")
+    pos_z: float = Field(alias="posZ", description="位置 Z")
+    ori_x: float = Field(alias="oriX", description="欧拉角 X（单位：角度）")
+    ori_y: float = Field(alias="oriY", description="欧拉角 Y（单位：角度）")
+    ori_z: float = Field(alias="oriZ", description="欧拉角 Z（单位：角度）")
+    length: float = Field(description="长度")
+    width: float = Field(description="宽度")
+
+
 class VLAExtension(BaseModel):
     """VLA 扩展信息"""
 
     buildings: list[BuildingInfo] = Field(
         alias="BuildingInfos", description="建筑物信息"
     )
+    regions: list[RegionInfo] = Field(alias="Regions", description="区域信息")
 
 
 class VLATextOutput(BaseModel):
@@ -43,11 +67,40 @@ class VLATextOutput(BaseModel):
     )
 
 
+class FunctionZoneViolation(BaseModel):
+    """功能区违规信息"""
+
+    rule_code: str = Field(alias="ruleCode", description="规则代码")
+    sticker_ids: list[str] = Field(alias="stickerIds", description="违规贴纸 ID 列表")
+
+
+class FunctionZoneResult(BaseModel):
+    """功能区检测结果"""
+
+    violations: list[FunctionZoneViolation] = Field(description="违规列表")
+
+
+class ParkingResult(BaseModel):
+    """停车区检测结果"""
+
+    violating_sticker_ids: list[str] = Field(
+        alias="violatingStickerIds", description="违规贴纸 ID 列表"
+    )
+
+
 class VLAExtensionOutput(BaseModel):
     """VLA 场景的扩展输出"""
 
-    text_info: VLATextOutput = Field(
-        serialization_alias="TextInfo", description="文本相关输出"
+    text_info: VLATextOutput | None = Field(
+        default=None, serialization_alias="TextInfo", description="文本相关输出"
+    )
+    function_zone_result: FunctionZoneResult | None = Field(
+        default=None,
+        serialization_alias="FunctionZoneResult",
+        description="功能区检测结果",
+    )
+    parking_result: ParkingResult | None = Field(
+        default=None, serialization_alias="ParkingResult", description="停车区检测结果"
     )
 
 

@@ -1,4 +1,4 @@
-__version__ = "0.3.0"
+__version__ = "0.4.0a1"
 
 from .sceneapi import SceneAPI
 from .geometry import Vector2, Vector3
@@ -6,6 +6,12 @@ from .models import (
     VLAExtension,
     VLATextOutput,
     VLAExtensionOutput,
+    FunctionZoneViolation,
+    FunctionZoneResult,
+    ParkingResult,
+    BuildingInfo,
+    RegionType,
+    RegionInfo,
     SubSceneInfo,
     LineType,
     BorderInfo,
@@ -41,6 +47,12 @@ __all__ = [
     "VLAExtension",
     "VLATextOutput",
     "VLAExtensionOutput",
+    "FunctionZoneViolation",
+    "FunctionZoneResult",
+    "ParkingResult",
+    "BuildingInfo",
+    "RegionType",
+    "RegionInfo",
     "SubSceneInfo",
     "LineType",
     "BorderInfo",
