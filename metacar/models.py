@@ -70,8 +70,10 @@ class VLATextOutput(BaseModel):
 class FunctionZoneViolation(BaseModel):
     """功能区违规信息"""
 
-    rule_code: str = Field(alias="ruleCode", description="规则代码")
-    sticker_ids: list[str] = Field(alias="stickerIds", description="违规贴纸 ID 列表")
+    rule_code: str = Field(serialization_alias="ruleCode", description="规则代码")
+    sticker_ids: list[str] = Field(
+        serialization_alias="stickerIds", description="违规贴纸 ID 列表"
+    )
 
 
 class FunctionZoneResult(BaseModel):
@@ -84,7 +86,7 @@ class ParkingResult(BaseModel):
     """停车区检测结果"""
 
     violating_sticker_ids: list[str] = Field(
-        alias="violatingStickerIds", description="违规贴纸 ID 列表"
+        serialization_alias="violatingStickerIds", description="违规贴纸 ID 列表"
     )
 
 
