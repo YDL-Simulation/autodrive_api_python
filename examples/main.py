@@ -79,7 +79,7 @@ def calc_steering(
     steering_angle = (theta - yaw) % (2 * math.pi)
     if steering_angle > math.pi:
         steering_angle -= 2 * math.pi
-    steering = math.degrees(-steering_angle) / 45
+    steering = math.degrees(-steering_angle) / 45 * 2  # 实测这里乘个2效果更好
     return max(min(steering, 1), -1)
 
 
